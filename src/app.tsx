@@ -9,7 +9,7 @@ import defaultSettings from '../config/defaultSettings';
 import type { RequestConfig } from '@@/plugin-request/request';
 import { BASE_URL } from '@/constants/constants';
 import socketUtil from './socket.util';
-import { SmileOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import { setLocale } from 'umi';
 
@@ -56,22 +56,38 @@ export async function getInitialState(): Promise<{
 
       socketUtil.get().removeAllListeners();
       if (msg && msg.roles && msg.roles.includes('admin')) {
+        // listener create order, reservation
         socketUtil.get().on('create', (message: any) => {
           console.log(message);
           notification.open({
             message: message?.type,
             description: message?.message,
-            icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+            icon: <CheckCircleOutlined style={{ color: '#61d800' }} />,
+          });
+        });
+        // listener cancel order, reservation
+        socketUtil.get().on('cancel', (message: any) => {
+          console.log(message);
+          notification.open({
+            message: message?.type,
+            description: message?.message,
+            icon: <WarningOutlined style={{ color: '#ee6002' }} />,
           });
         });
       } else {
+        // listener admin accept, reject, complete
         console.log(`update-${msg._id}`);
         socketUtil.get().on(`update-${msg._id}`, (message: any) => {
           console.log(message);
           notification.open({
             message: message?.type,
             description: message?.message,
-            icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+            icon:
+              message?.type == 'Rejected order' || message?.type == 'Rejected reservation' ? (
+                <WarningOutlined style={{ color: '#ee6002' }} />
+              ) : (
+                <CheckCircleOutlined style={{ color: '#61d800' }} />
+              ),
           });
         });
       }
@@ -142,4 +158,3 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ...initialState?.settings,
   };
 };
-
