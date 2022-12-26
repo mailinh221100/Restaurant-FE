@@ -26,8 +26,8 @@ const CreateTableForm = ({ open, onCreate, onCancel, loading }: any) => {
       <Form form={form} layout="vertical" name="form_in_modal">
         <Form.Item
           name="tableName"
-          label="Zone Name"
-          rules={[{ required: true, message: 'Please input your zone name!' }]}
+          label="Table Name"
+          rules={[{ required: true, message: 'Please input your table name!' }]}
         >
           <Input />
         </Form.Item>
